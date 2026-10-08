@@ -1,0 +1,8 @@
+﻿---
+id: caso-06
+allowedRoles: [direccion, soporte]
+language: es
+---
+Caso de soporte 06: recogida fallida. El negocio ficticio Cerámica Brisa informó que no acudió el vehículo. Operaciones detectó una asignación duplicada de ruta. Reprogramó la recogida para la mañana siguiente y envió aviso. Resolución: recogida realizada y regla de duplicados corregida.
+
+

@@ -1,0 +1,16 @@
+﻿# Local API smoke verification
+
+Run date: 2026-10-08, .NET SDK 10.0.401, Release build, local Fake model and in-memory store.
+
+| Request/check | Actual result |
+|---|---|
+| `GET /health/live` and `/health/ready` | Both returned 200 (`live`, `ready`). |
+| `GET /swagger/index.html` | HTTP 200. |
+| English contract question as `direccion` | Answer in English with `[1]`, source `contrato-marco-transportista.md`, source language `en`. |
+| Same English contract question as `soporte` | English abstention; zero sources and no contract content. |
+| Spanish contract question as `direccion` | Answer in Spanish with `[1]`, source `contrato-marco-transportista.md`, source language `es`. |
+| Same Spanish contract question as `soporte` | Spanish abstention; zero sources and no contract content. |
+| `POST /api/v1/chat` SSE | HTTP 200; emitted `token`, `sources`, and `done` events. |
+| `GET /api/v1/eval` | `hit-rate@5` = 1.0 (20/20; 10 cases per language). |
+
+These checks do not verify live model or Azure AI Search services. Docker Compose could not start because the Docker Desktop Linux engine was unavailable in this environment.

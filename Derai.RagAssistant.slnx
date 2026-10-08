@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Derai.RagAssistant.Api/Derai.RagAssistant.Api.csproj" />
+    <Project Path="src/Derai.RagAssistant.Application/Derai.RagAssistant.Application.csproj" />
+    <Project Path="src/Derai.RagAssistant.Domain/Derai.RagAssistant.Domain.csproj" />
+    <Project Path="src/Derai.RagAssistant.Infrastructure/Derai.RagAssistant.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Derai.RagAssistant.IntegrationTests/Derai.RagAssistant.IntegrationTests.csproj" />
+    <Project Path="tests/Derai.RagAssistant.Tests/Derai.RagAssistant.Tests.csproj" />
+  </Folder>
+</Solution>

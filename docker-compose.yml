@@ -1,0 +1,13 @@
+services:
+  derai-rag-assistant:
+    build: .
+    ports: ["8080:8080"]
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Auth__SigningKey: ${AUTH_SIGNING_KEY:-}
+      Admin__ApiKey: ${ADMIN_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 30s
+      timeout: 3s
+      retries: 3

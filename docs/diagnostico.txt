@@ -1,0 +1,35 @@
+﻿Diagnostic and verification report
+==================================
+
+Environment
+- .NET SDK 10.0.401, runtime 10.0.12, Windows x64.
+- Target framework: net10.0.
+
+Original build failure and resolution
+- Initial API compilation failed with CS1061 at Program.cs line 14: AddFixedWindowLimiter was unavailable because Microsoft.AspNetCore.RateLimiting was not imported.
+- Added the missing namespace import. The solution now builds Release with warnings treated as errors.
+
+Test runner hang investigation
+- Unconstrained MSBuild restore/test spawned a large number of dotnet worker processes and stalled before completion; no individual test hang was reproduced.
+- Serial MSBuild (-m:1 -nodeReuse:false) and blame-hang timeout completed the tests reliably.
+
+Bilingual retrieval corrections
+- Added 15 logical Spanish/English document pairs with matching IDs and ACL metadata.
+- Search applies role ACL before ranking, selects relevant chunks in the requested language first, and falls back only when no sufficiently relevant hit exists. Cited sources expose their language.
+- Evaluation now has 10 Spanish and 10 English fixed cases. The local Fake provider returns all 20 expected documents.
+
+Latest verification evidence
+- dotnet build Derai.RagAssistant.slnx -c Release --no-restore -warnaserror -m:1 -nodeReuse:false -p:UseSharedCompilation=false: succeeded, 0 warnings, 0 errors.
+- dotnet test Derai.RagAssistant.slnx -c Release --no-build -m:1 -nodeReuse:false -p:UseSharedCompilation=false --blame-hang --blame-hang-timeout 60s --blame-hang-dump-type none: 22 passed, 0 failed (6 integration, 16 unit).
+- Live local eval: hit-rate@5 20/20 (1.0).
+- Live local English and Spanish direction requests cited contrato-marco-transportista.md with [1]; support abstained in both languages with 0 sources.
+- Playwright Chromium headless generated chat-direccion.png, chat-direccion-dark.png, chat-soporte.png, and calidad.png.
+- `docker compose config --quiet` succeeded. Docker Compose runtime could not run because the Docker Desktop Linux engine was unavailable; runtime remains unverified.
+- Real model, embedding, and Azure AI Search services were not contacted; their adapters have mocked-handler tests only.
+- The API now generates an ephemeral random JWT signing key when `Auth__SigningKey` is unset; reindexing requires an explicitly configured `Admin__ApiKey`. No Git repository metadata exists in this directory. No commit or push was made.
+
+See api-smoke.txt for HTTP results and the README files for the verification matrix and limitations.
+
+
+
+

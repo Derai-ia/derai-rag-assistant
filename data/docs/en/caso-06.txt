@@ -1,0 +1,6 @@
+---
+id: caso-06
+allowedRoles: [direccion, soporte]
+language: en
+---
+Support case 06: failed pickup. Fictional business Cerámica Brisa reported that the vehicle did not arrive. Operations found a duplicate route assignment. The pickup was rescheduled for the following morning and a notification was sent. Resolution: pickup completed and duplicate prevention rule corrected.

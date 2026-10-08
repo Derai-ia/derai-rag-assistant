@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.idea/
+.env
+*.user
+**/TestResults/
+*.binlog
+build-*.log
+**/node_modules/

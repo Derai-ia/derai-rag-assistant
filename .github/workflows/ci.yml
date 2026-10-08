@@ -1,0 +1,14 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: '10.0.x' }
+      - run: dotnet restore Derai.RagAssistant.slnx
+      - run: dotnet build Derai.RagAssistant.slnx -c Release --no-restore -warnaserror -m:1 -nodeReuse:false -p:UseSharedCompilation=false
+      - run: dotnet test Derai.RagAssistant.slnx -c Release --no-build -m:1 -nodeReuse:false --blame-hang --blame-hang-timeout 60s --blame-hang-dump-type none
+      - run: dotnet format Derai.RagAssistant.slnx --verify-no-changes --no-restore
+      - run: docker build -t derai-rag-assistant .
