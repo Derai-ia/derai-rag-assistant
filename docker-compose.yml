@@ -6,6 +6,20 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       Auth__SigningKey: ${AUTH_SIGNING_KEY:-}
       Admin__ApiKey: ${ADMIN_API_KEY:-}
+      Llm__Provider: ${LLM_PROVIDER:-Fake}
+      Llm__OpenAICompatible__BaseUrl: ${LLM_OPENAI_COMPATIBLE_BASE_URL:-https://integrate.api.nvidia.com/v1}
+      Llm__OpenAICompatible__ApiKey: ${LLM_OPENAI_COMPATIBLE_API_KEY:-}
+      Llm__OpenAICompatible__ChatModel: ${LLM_OPENAI_COMPATIBLE_CHAT_MODEL:-meta/llama-3.2-1b-instruct}
+      Llm__OpenAICompatible__EmbeddingModel: ${LLM_OPENAI_COMPATIBLE_EMBEDDING_MODEL:-}
+      Llm__EmbeddingProvider: ${LLM_EMBEDDING_PROVIDER:-}
+      Llm__MaxTokens: ${LLM_MAX_TOKENS:-1200}
+      Llm__TimeoutSeconds: ${LLM_TIMEOUT_SECONDS:-120}
+      Llm__AttemptTimeoutSeconds: ${LLM_ATTEMPT_TIMEOUT_SECONDS:-15}
+      Llm__MaxRetries: ${LLM_MAX_RETRIES:-2}
+      Llm__Resilience__AttemptTimeoutSeconds: ${LLM_RESILIENCE_ATTEMPT_TIMEOUT_SECONDS:-45}
+      Llm__Resilience__TotalRequestTimeoutSeconds: ${LLM_RESILIENCE_TOTAL_REQUEST_TIMEOUT_SECONDS:-180}
+      Llm__Resilience__CircuitBreakerSamplingDurationSeconds: ${LLM_RESILIENCE_CIRCUIT_BREAKER_SAMPLING_DURATION_SECONDS:-90}
+      Llm__Resilience__MaxRetries: ${LLM_RESILIENCE_MAX_RETRIES:-2}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
       interval: 30s

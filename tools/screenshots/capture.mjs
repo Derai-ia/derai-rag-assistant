@@ -40,9 +40,8 @@ try {
     const newPage = async () => {
       const page = await browser.newPage({ viewport: { width: 1440, height: 1120 }, deviceScaleFactor: 1 });
       await page.goto(baseUrl, { waitUntil: 'networkidle' });
-      const languageAuth = page.waitForResponse(response => response.url().endsWith('/api/v1/auth/demo') && response.request().method() === 'POST');
       await page.locator('#language').click();
-      await languageAuth;
+      await page.waitForTimeout(250);
       return page;
     };
 
@@ -54,7 +53,7 @@ try {
     await page.locator('#form button').click();
     await page.locator('#sources .source').first().waitFor();
     await page.locator('#messages .citation').first().waitFor();
-    await page.getByText('contrato-marco-transportista.md').waitFor();
+    await page.getByText('contrato-marco-transportista.md').first().waitFor();
     await page.screenshot({ path: path.join(output, 'chat-direccion.png'), fullPage: true });
     await page.locator('#theme').click();
     await page.screenshot({ path: path.join(output, 'chat-direccion-dark.png'), fullPage: true });
@@ -62,13 +61,15 @@ try {
     const supportPage = await newPage();
     await supportPage.locator('#question').fill('What are the confidential commercial terms and negotiated standard pallet rate?');
     await supportPage.locator('#form button').click();
-    await supportPage.getByText('I could not find enough information').waitFor();
+    await supportPage.getByText('connect you with someone').waitFor();
     await supportPage.screenshot({ path: path.join(output, 'chat-soporte.png'), fullPage: true });
 
     const qualityPage = await newPage();
     await qualityPage.locator('#eval').click();
+    const evaluation = qualityPage.waitForResponse(response => response.url().includes('/api/v1/eval?corpus=nordia'));
     await qualityPage.locator('#runEval').click();
-    await qualityPage.getByText('Hit-rate@5: 100% (20/20)').waitFor();
+    await evaluation;
+    await qualityPage.waitForTimeout(300);
     await qualityPage.screenshot({ path: path.join(output, 'calidad.png'), fullPage: true });
     console.log('Captured docs/img/chat-direccion.png, chat-direccion-dark.png, chat-soporte.png, calidad.png');
   } finally {

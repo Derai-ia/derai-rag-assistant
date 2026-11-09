@@ -38,25 +38,51 @@ public sealed class AzureAiSearchVectorStoreTests
         Assert.Equal("safe.md", hits[0].Chunk.File);
         Assert.Contains(handler.Requests, x => x.Method == "PUT" && x.Body.Contains("\"dimensions\":128", StringComparison.Ordinal));
         Assert.Contains(handler.Requests, x => x.Body.Contains("@search.action", StringComparison.Ordinal) && x.Body.Contains("mergeOrUpload", StringComparison.Ordinal));
+        Assert.Contains(handler.Requests, x => x.Body.Contains("\"embeddingModel\":\"fake-hash-128\"", StringComparison.Ordinal) && x.Body.Contains("\"embeddingDimension\":128", StringComparison.Ordinal));
         using var searchRequest = JsonDocument.Parse(handler.Requests.Last().Body);
         Assert.Equal("allowedRoles/any(r: r eq 'support') and language eq 'en'", searchRequest.RootElement.GetProperty("filter").GetString());
         Assert.Equal("preFilter", searchRequest.RootElement.GetProperty("vectorFilterMode").GetString());
         Assert.All(handler.Requests, x => Assert.Equal("unit-key", x.ApiKey));
     }
 
+    [Fact]
+    public async Task Changing_embedding_model_selects_a_fresh_index_with_its_dimension()
+    {
+        var firstHandler = new SearchHandler();
+        var secondHandler = new SearchHandler();
+        using var firstClient = new HttpClient(firstHandler);
+        using var secondClient = new HttpClient(secondHandler);
+        var chunks = new[] { new KnowledgeChunk("sample.md", "Sample", "sample content", "en", ["support"]) };
+        await new AzureAiSearchVectorStore(firstClient, new("https://mock.search.windows.net", "key", "knowledge"), new ConfigurableEmbeddingModel("nvidia:model-a:3", 3)).IndexAsync(chunks);
+        await new AzureAiSearchVectorStore(secondClient, new("https://mock.search.windows.net", "key", "knowledge"), new ConfigurableEmbeddingModel("nvidia:model-b:4", 4)).IndexAsync(chunks);
+
+        var firstSchema = firstHandler.Requests.Single(request => request.Method == "PUT");
+        var secondSchema = secondHandler.Requests.Single(request => request.Method == "PUT");
+        Assert.NotEqual(firstSchema.Uri, secondSchema.Uri);
+        Assert.Contains("\"dimensions\":3", firstSchema.Body, StringComparison.Ordinal);
+        Assert.Contains("\"dimensions\":4", secondSchema.Body, StringComparison.Ordinal);
+        Assert.Contains("\"embeddingModel\":\"nvidia:model-a:3\"", firstHandler.Requests.Single(request => request.Body.Contains("@search.action", StringComparison.Ordinal)).Body, StringComparison.Ordinal);
+    }
+
     private sealed class SearchHandler : HttpMessageHandler
     {
-        public List<(string Method, string Body, string? ApiKey)> Requests { get; } = [];
+        public List<(string Method, string Body, string? ApiKey, string Uri)> Requests { get; } = [];
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var body = request.Content is null ? "" : await request.Content.ReadAsStringAsync(cancellationToken);
-            Requests.Add((request.Method.Method, body, request.Headers.TryGetValues("api-key", out var values) ? values.Single() : null));
+            Requests.Add((request.Method.Method, body, request.Headers.TryGetValues("api-key", out var values) ? values.Single() : null, request.RequestUri!.ToString()));
             var response = request.Method == HttpMethod.Put ? new HttpResponseMessage(HttpStatusCode.Created) :
                 request.RequestUri!.AbsolutePath.EndsWith("/search", StringComparison.Ordinal)
                     ? new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{\"value\":[{\"id\":\"x\",\"file\":\"safe.md\",\"section\":\"Allowed\",\"text\":\"authorized text\",\"language\":\"en\",\"allowedRoles\":[\"support\"],\"@search.score\":0.04},{\"id\":\"y\",\"file\":\"private.md\",\"section\":\"Secret\",\"text\":\"private text\",\"language\":\"en\",\"allowedRoles\":[\"director\"],\"@search.score\":0.9}]}", Encoding.UTF8, "application/json") }
                     : new HttpResponseMessage(HttpStatusCode.OK);
             return response;
         }
+    }
+
+    private sealed class ConfigurableEmbeddingModel(string modelId, int dimensions) : IEmbeddingModel
+    {
+        public string ModelId => modelId;
+        public Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default) => Task.FromResult(Enumerable.Repeat(0.5f, dimensions).ToArray());
     }
 
     private sealed class LanguageFallbackHandler : HttpMessageHandler

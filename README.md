@@ -1,76 +1,55 @@
-﻿# DERAI RAG Assistant
+# Fictional company RAG assistant
 
-![CI](https://github.com/derai/derai-rag-assistant/actions/workflows/ci.yml/badge.svg)
+.NET 10 reference demo for Spanish and English knowledge Q&A with citations and role based access. The UI shows one sample company: **Nordia Logistics (fictional)**. All financial documents, invoices, sales, and results are invented.
 
-A .NET 10 reference app for bilingual document Q&A with citations and role based access control. Nordia Logística S.L. and all documents in the corpus are fictional.
-
-## Run locally without Docker
-
-From the repository root, run these three commands:
+## Run
 
 ```bash
 dotnet restore Derai.RagAssistant.slnx
-dotnet build Derai.RagAssistant.slnx -c Release
+dotnet build -c Release
 dotnet run --project src/Derai.RagAssistant.Api --urls http://localhost:8080
 ```
 
-Open <http://localhost:8080>. The default Fake model and in-memory index need no credentials.
+Open <http://localhost:8080>. Fake and the in-memory store need no credentials. Docker Compose also works with `docker compose up --build`.
 
-## Run with Docker Compose
+## Using NVIDIA API
 
-```bash
-docker compose up --build -d
-docker compose ps
-curl http://localhost:8080/health/ready
+The `OpenAICompatible` provider defaults to `https://integrate.api.nvidia.com/v1` and uses [NVIDIA Chat Completions SSE](https://docs.api.nvidia.com/nim/reference/meta-llama-3_2-1b-instruct-infer). Configure `.env` (never commit it):
+
+```dotenv
+LLM_PROVIDER=OpenAICompatible
+LLM_OPENAI_COMPATIBLE_API_KEY=
+LLM_OPENAI_COMPATIBLE_CHAT_MODEL=meta/llama-3.2-1b-instruct
+LLM_OPENAI_COMPATIBLE_EMBEDDING_MODEL=
+LLM_MAX_TOKENS=1200
+LLM_RESILIENCE_ATTEMPT_TIMEOUT_SECONDS=45
+LLM_RESILIENCE_TOTAL_REQUEST_TIMEOUT_SECONDS=180
+LLM_RESILIENCE_CIRCUIT_BREAKER_SAMPLING_DURATION_SECONDS=90
+LLM_RESILIENCE_MAX_RETRIES=2
 ```
 
-Stop the service with `docker compose down`.
+Resilience settings group per-attempt timeout, total timeout, circuit-breaker sampling window, and retries under `Llm:Resilience`. The total is raised as needed to cover all attempts and their delays; SSE content is read after the headers arrive and is not cut off by the total request timeout.
 
-## Screenshots
+The key stays in environment configuration and `.env` is Git-ignored. Without an embedding model, search uses Fake embeddings while chat may use NVIDIA. Configured embeddings send `input_type=query` for search and `input_type=passage` for indexing, with `truncate=END` as specified by [NVIDIA Embeddings](https://docs.api.nvidia.com/nim/reference/nvidia-nv-embedqa-e5-v5-infer). Startup indexes the documents; changing models selects a new index with model identifier and output dimension recorded.
 
-| UI state | Capture |
-|---|---|
-| Direction, light theme, English answer with citation | ![Direction chat in light theme](docs/img/chat-direccion.png) |
-| Direction, dark theme | ![Direction chat in dark theme](docs/img/chat-direccion-dark.png) |
-| Support abstains from the restricted contract | ![Support chat abstention](docs/img/chat-soporte.png) |
-| Bilingual retrieval evaluation | ![Quality evaluation](docs/img/calidad.png) |
-
-Regenerate them with `tools/screenshots/run.ps1` on Windows or `bash tools/screenshots/run.sh` on Linux/macOS. Playwright and Chromium are development tools isolated in `tools/screenshots/`.
+**NVIDIA status:** request, stream, and error handling are covered by simulated `HttpMessageHandler` tests. The live API has not been tested with a real key.
 
 ## Verification status
 
-| Capability | Evidence and actual status |
+| Capability | Evidence and status |
 |---|---|
-| .NET 10 Release build with warnings as errors | **Verified locally** — build succeeded with 0 warnings and 0 errors. |
-| Unit and API integration tests | **Verified locally** — 22 tests pass, including bilingual ACL, contract citations, and support abstention. |
-| Bilingual evaluation | **Verified locally** — Fake provider returned 20/20 expected source hits (10 Spanish, 10 English). This is a fixed fixture check. |
-| Health, Swagger, SSE and role ACL | **Verified locally** — health endpoints and Swagger returned 200; SSE emitted `token`, `sources`, `done`; restricted queries returned no sources to support. |
-| UI screenshots | **Verified locally** — generated with Playwright Chromium headless; light/dark direction, support, and quality captures are in `docs/img/`. |
-| OpenAI, Azure OpenAI, Anthropic and Ollama chat adapters | **Tested with mocked HTTP handlers** — request formats and streamed response parsing. **Not tested against real services.** |
-| OpenAI, Azure OpenAI and Ollama embedding adapters | **Tested with mocked HTTP handlers** — request and response parsing. **Not tested against real services.** |
-| Azure AI Search adapter | **Tested with mocked HTTP handler** — schema, batch upsert, role/language filters and fallback. **Not tested against a real service.** |
-| Docker Compose in this environment | **Not tested against the real service/runtime** — Docker Desktop's Linux engine was unavailable during verification. |
+| .NET 10 Release build | Verified: 0 warnings and 0 errors with `dotnet build -c Release -m:1 --no-restore /nodeReuse:false /p:BuildInParallel=false`. |
+| Formatting | Verified with `dotnet format --verify-no-changes`. |
+| Tests | Verified: 45 .NET tests pass (7 integration, 38 unit), including simulated handlers and Fake ES/EN cases. |
+| UI rendering security | Verified with `npm test`; both Markdown rendering and malicious HTML escaping tests pass. |
+| Live NVIDIA API | Pending a test with a user key; simulated handler only. |
+| Sample data | Nordia Logistics, people, invoices, amounts, and transactions are fictional. |
 
-The local API checks used the Fake model, the in-memory store, and demo JWTs. They do not establish production availability or service quality.
+## Knowledge and API
 
-## Architecture and behavior
-
-- Clean Architecture projects separate Domain, Application, Infrastructure, and API.
-- The 15 logical documents are stored as Spanish and English counterparts under `data/docs/es/` and `data/docs/en/`. Each pair shares `id` and `allowedRoles` front matter and declares its own `language`.
-- ACL filtering happens before retrieval. The store first searches the selected language and falls back to the other language only when it has no sufficiently relevant hit. Sources include the source language.
-- `POST /api/v1/chat` streams `token`, `sources`, and `done` SSE events. `POST /api/v1/chat/sync` returns a JSON answer with citations.
-- The local Fake model is deterministic and abstains when its evidence score is too low. Retrieved document text is treated as untrusted input.
-- `GET /api/v1/eval` checks 20 fixed queries and expected source documents. `POST /api/v1/knowledge/reindex` requires `X-Admin-Key`.
-- The browser UI supports English/Spanish labels, role selection, citations, evaluation, and light/dark themes.
-
-## Limitations
-
-The Fake hash embedding is **not semantic**. Local bilingual retrieval also uses lexical matching; a real embedding provider is expected to improve semantic retrieval, but that improvement has not been measured against a live provider here. The 20/20 evaluation is a small deterministic fixture, not a general relevance benchmark. Real LLM calls, real embeddings, and a deployed Azure AI Search index remain unverified. Demo JWTs signed with an ephemeral per-process key unless configured, in-memory history, and synthetic documents are not production identity, secret management, persistence, or operational guarantees.
-
-## Configuration
-
-Provider settings use .NET environment variable names such as `Llm__Provider`, `Llm__ApiKey`, `Llm__Endpoint`, `Llm__EmbeddingProvider`, `VectorStore__Provider`, `VectorStore__Endpoint`, `VectorStore__ApiKey`, and `Auth__SigningKey`. Defaults are `Fake` and `Memory`; without `Auth__SigningKey`, the API generates a random process-local signing key. See [the Spanish README](README.es.md) for the localized guide and [contribution instructions](CONTRIBUTING.md).
-
-
-
-
+- The API separates startup (`Program.cs`), configuration and initialization (`Configuration/`), endpoints (`Endpoints/`), authentication (`Security/`), and HTTP-facing services (`Services/`). Domain, application, and infrastructure layers remain in their respective projects.
+- `data/docs/nordia/{es,en}/` is the only corpus, with fictional logistics operations and financial data.
+- Greeting and suggested questions match this company in Spanish and English. Role based ACLs apply.
+- `POST /api/v1/chat?corpus=nordia` streams SSE; `POST /api/v1/chat/sync?corpus=nordia` returns JSON and citations. Corpus is optional; Nordia is the only enabled corpus.
+- `GET /api/v1/eval?corpus=nordia` runs 20 questions (10 ES and 10 EN). `POST /api/v1/knowledge/reindex?corpus=nordia` requires `X-Admin-Key`.
+- Fake is deterministic for demos and evaluation; it does not replace a real model.

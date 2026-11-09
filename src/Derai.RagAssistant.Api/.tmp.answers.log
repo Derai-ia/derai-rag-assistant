@@ -1,0 +1,64 @@
+[16:11:25 INF] Now listening on: http://localhost:8081
+[16:11:25 INF] Application started. Press Ctrl+C to shut down.
+[16:11:25 INF] Hosting environment: Production
+[16:11:25 INF] Content root path: C:\Users\David\Documents\Proyectos\PortFolio\derai-rag-assistant\src\Derai.RagAssistant.Api
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - application/json 22
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type '<>f__AnonymousType3`1' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - 200 null application/json; charset=utf-8 94.2289ms
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - application/json 109
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type 'ChatReply' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - 200 null application/json; charset=utf-8 74.7148ms
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - application/json 20
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type '<>f__AnonymousType3`1' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - 200 null application/json; charset=utf-8 3.4588ms
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - application/json 110
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type 'ChatReply' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - 200 null application/json; charset=utf-8 5.9573ms
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - application/json 20
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type '<>f__AnonymousType3`1' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - 200 null application/json; charset=utf-8 2.1708ms
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - application/json 128
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type 'ChatReply' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - 200 null application/json; charset=utf-8 5.8142ms
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - application/json 18
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type '<>f__AnonymousType3`1' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - 200 null application/json; charset=utf-8 2.3877ms
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - application/json 117
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type 'ChatReply' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - 200 null application/json; charset=utf-8 4.6916ms
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - application/json 22
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type '<>f__AnonymousType3`1' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/auth/demo'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/auth/demo - 200 null application/json; charset=utf-8 2.3233ms
+[16:11:27 INF] Request starting HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - application/json 113
+[16:11:27 INF] Executing endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Setting HTTP status code 200.
+[16:11:27 INF] Writing value of type 'ChatReply' as Json.
+[16:11:27 INF] Executed endpoint 'HTTP: POST /api/v1/chat/sync'
+[16:11:27 INF] Request finished HTTP/1.1 POST http://localhost:8081/api/v1/chat/sync?corpus=nordia - 200 null application/json; charset=utf-8 4.7209ms

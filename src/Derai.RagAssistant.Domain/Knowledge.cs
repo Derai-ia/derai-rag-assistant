@@ -19,5 +19,7 @@ public interface IChatModel
 
 public interface IEmbeddingModel
 {
+    string ModelId => "unspecified-embedding-128";
     Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default);
+    Task<float[]> EmbedAsync(string text, string inputType, CancellationToken cancellationToken = default) => EmbedAsync(text, cancellationToken);
 }

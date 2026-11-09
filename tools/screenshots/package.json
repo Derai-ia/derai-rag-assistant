@@ -1,11 +1,12 @@
-{
-  "name": "derai-rag-assistant-screenshots",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "capture": "node capture.mjs"
-  },
-  "devDependencies": {
-    "playwright": "^1.58.2"
-  }
+﻿{
+    "name":  "derai-rag-assistant-screenshots",
+    "private":  true,
+    "type":  "module",
+    "scripts":  {
+                    "capture":  "node capture.mjs",
+                    "test":  "node --test markdown-renderer.test.mjs"
+                },
+    "devDependencies":  {
+                            "playwright":  "^1.58.2"
+                        }
 }

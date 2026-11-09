@@ -1,0 +1,10 @@
+[16:10:39 INF] Now listening on: http://localhost:8081
+[16:10:39 INF] Application started. Press Ctrl+C to shut down.
+[16:10:39 INF] Hosting environment: Production
+[16:10:39 INF] Content root path: C:\Users\David\Documents\Proyectos\PortFolio\derai-rag-assistant\src\Derai.RagAssistant.Api
+[16:10:41 INF] Request starting HTTP/1.1 GET http://localhost:8081/api/v1/eval?corpus=nordia - null null
+[16:10:41 INF] Executing endpoint 'HTTP: GET /api/v1/eval'
+[16:10:41 INF] Setting HTTP status code 200.
+[16:10:41 INF] Writing value of type '<>f__AnonymousType6`6' as Json.
+[16:10:41 INF] Executed endpoint 'HTTP: GET /api/v1/eval'
+[16:10:41 INF] Request finished HTTP/1.1 GET http://localhost:8081/api/v1/eval?corpus=nordia - 200 null application/json; charset=utf-8 189.4573ms
